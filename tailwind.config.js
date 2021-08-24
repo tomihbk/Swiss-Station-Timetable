@@ -1,12 +1,18 @@
 module.exports = {
   // removes unused styles in production
   purge: ['./src/**/*.{js,jsx,ts,tsx}', './public/index.html'],
-  darkMode: false, // or 'media' or 'class'
+  darkMode: 'class', // or 'media' or 'class'
   theme: {
+    fontFamily: {
+      'display': 'Inter UI, Inter'
+    },
     extend: {},
   },
   variants: {
-    extend: {},
+    extend: {
+      dropShadow: ['hover', 'focus'],
+      cursor: ['hover', 'focus']
+    },
   },
   plugins: [],
 }

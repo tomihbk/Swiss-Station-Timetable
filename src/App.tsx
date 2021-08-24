@@ -1,11 +1,7 @@
 import Home from "./pages/Home";
 
 function App(): React.ReactElement {
-  return (
-    <div>
-     <Home/>
-    </div>
-  );
+  return <Home/>
 }
 
 export default App;
