@@ -4,14 +4,22 @@ module.exports = {
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     fontFamily: {
-      'display': 'Inter UI, Inter'
+      'display': 'HK Grotesk, Roboto, Helvetica, sans-serif',
+      'secondary': 'Inter UI, Inter, sans-serif'
     },
-    extend: {},
+    minWidth: {
+      'min-suggested-station-card': '20em'
+    },
+    extend: {
+    },
   },
   variants: {
     extend: {
       dropShadow: ['hover', 'focus'],
-      cursor: ['hover', 'focus']
+      cursor: ['hover', 'focus'],
+      opacity: ['dark'],
+      transform: ['hover', 'focus'],
+      borderWidth: ['hover', 'focus']
     },
   },
   plugins: [],
