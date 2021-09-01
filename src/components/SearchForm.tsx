@@ -1,15 +1,15 @@
+import { useEffect, useState } from "react";
+import moment from "moment";
+import isItFirefox from "../util/isItFirefox";
+import stationsList from "../data/stationlist";
+import axios from "axios";
 import { ReactComponent as SearchIcon } from "../images/search.svg";
 import { ReactComponent as CalendarIcon } from "../images/calendar.svg";
 import { ReactComponent as ClockIcon } from "../images/clock.svg";
 import { ReactComponent as DirectionIcon } from "../images/direction.svg";
 import { ReactComponent as DocumentIcon } from "../images/document.svg";
 import { ReactComponent as ScrollDownIcon } from "../images/scrolldown.svg";
-
-import { useEffect, useState } from "react";
-import moment from "moment";
-import isItFirefox from "../util/isItFirefox";
-import stationsList from "../data/stationlist";
-import axios from "axios";
+import { useHistory } from 'react-router-dom'
 
 const SearchForm = (): React.ReactElement => {
   interface FilteredDataType {
@@ -19,17 +19,18 @@ const SearchForm = (): React.ReactElement => {
   [];
 
   interface ApiBodyTypeData {
-    RequestorReference?: string;
+    RequestorReference: string;
     RequestCurrentTimeStamp?: string;
-    StopPlaceReference?: string;
-    NumberOfResult?: string;
-    ArrivalOrDepature?: string;
-    ArrivalOrDepatureTime?: string;
-    EnableRealTimeData?: string;
-    IncludePreviousCalls?: string;
-    IncludeOnwardCalls?: string;
+    StopPlaceReference: string;
+    NumberOfResult: string;
+    ArrivalOrDepature: string;
+    ArrivalOrDepatureTime: string;
+    EnableRealTimeData: string;
+    IncludePreviousCalls: string;
+    IncludeOnwardCalls: string;
   }
 
+  const history = useHistory()
   const now = moment().format("hh:mm:ss");
 
   const [filteredData, setFilteredData] = useState<FilteredDataType[]>();
@@ -53,7 +54,8 @@ const SearchForm = (): React.ReactElement => {
     return word
       .toLowerCase()
       .normalize("NFD")
-      .replace(/[\u0300-\u036f]/g, "");
+      .replace(/[\u0300-\u036f]/g, "") //this removes diacritics
+      .replace(/[^\w\s]/gi, ""); //this removes special characters
   };
   const filterHandler = (data: React.FormEvent<HTMLInputElement>) => {
     const searchedLocation = data.currentTarget.value;
@@ -143,7 +145,6 @@ const SearchForm = (): React.ReactElement => {
       arrivalOrDepartureTime &&
       stopPlaceReference
     ) {
-      console.log("im inside the api thingy");
       setApiBodyData({
         RequestorReference: "Swiss Station Timetable",
         RequestCurrentTimeStamp: currentTimeStamp,
@@ -155,6 +156,7 @@ const SearchForm = (): React.ReactElement => {
         IncludePreviousCalls: "true",
         IncludeOnwardCalls: "true",
       });
+      history.push('/trips')
     }
   };
 
