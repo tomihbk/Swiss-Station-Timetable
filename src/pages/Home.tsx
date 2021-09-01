@@ -5,7 +5,7 @@ import ToggleTheme from "../components/ToggleTheme"
 const Home = (): React.ReactElement => {
 
     return (
-        <div className="min-h-screen flex flex-col justify-center bg-gray-100 dark:bg-gray-800 transition duration-500" >
+        <div>
             <ToggleTheme/>
             <h1 className="text-red-700 dark:text-red-600 font-display font-black text-6xl text-center mt-8">Swiss Station Timetable</h1>
             <p className="text-gray-600 text-lg text-center mt-4 font-secondary dark:text-gray-300 mx-2">Click on the suggested stations or use the search bar</p>
