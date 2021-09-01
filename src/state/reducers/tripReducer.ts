@@ -6,7 +6,7 @@ const initialState = {}
 const reducer = (state = initialState, action: Action) => {
     switch (action.type) {
         case ActionType.ADD_TRIPS:
-            return [state, action.payload]
+            return action.payload
         case ActionType.REMOVE_TRIPS:
             return []
         default:
