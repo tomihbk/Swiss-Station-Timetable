@@ -10,6 +10,9 @@ import { ReactComponent as DirectionIcon } from "../images/direction.svg";
 import { ReactComponent as DocumentIcon } from "../images/document.svg";
 import { ReactComponent as ScrollDownIcon } from "../images/scrolldown.svg";
 import { useHistory } from 'react-router-dom'
+import { useDispatch } from "react-redux";
+import { bindActionCreators } from "redux";
+import { actionCreators } from "../state";
 
 const SearchForm = (): React.ReactElement => {
   interface FilteredDataType {
@@ -47,6 +50,10 @@ const SearchForm = (): React.ReactElement => {
     moment().format("yyyy-MM-DD")
   );
 
+  const dispatch = useDispatch();
+
+  const { addTrips } = bindActionCreators(actionCreators, dispatch);
+
   const formClassStyle =
     "appearance-none bg-white dark:bg-gray-600 px-6 pr-16 rounded-lg text-sm focus:border-solid focus:border-blue-500 dark:focus:border-gray-200 focus:border-2 w-full h-20 transition duration-300 hover:cursor-pointer";
 
@@ -54,8 +61,8 @@ const SearchForm = (): React.ReactElement => {
     return word
       .toLowerCase()
       .normalize("NFD")
+      .replace(/[^\w\s]/gi, "") //this removes special characters
       .replace(/[\u0300-\u036f]/g, "") //this removes diacritics
-      .replace(/[^\w\s]/gi, ""); //this removes special characters
   };
   const filterHandler = (data: React.FormEvent<HTMLInputElement>) => {
     const searchedLocation = data.currentTarget.value;
@@ -114,7 +121,9 @@ const SearchForm = (): React.ReactElement => {
         data: apiBodyData,
       })
         .then(function (response) {
-          console.log(response.data);
+          addTrips(response.data)
+          //console.log(response.data);
+          history.push('/trips')
         })
         .catch(function (error) {
           console.log(error);
@@ -156,7 +165,6 @@ const SearchForm = (): React.ReactElement => {
         IncludePreviousCalls: "true",
         IncludeOnwardCalls: "true",
       });
-      history.push('/trips')
     }
   };
 
