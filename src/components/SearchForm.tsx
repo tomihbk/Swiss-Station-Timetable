@@ -34,8 +34,8 @@ const SearchForm = (): React.ReactElement => {
   }
 
   const history = useHistory()
-  const now = moment().format("hh:mm:ss");
-
+  const now = moment().format("HH:mm:ss");
+  
   const [filteredData, setFilteredData] = useState<FilteredDataType[]>();
   const [apiBodyData, setApiBodyData] = useState<ApiBodyTypeData>();
   const [numberOfResults, setNumberOfResults] = useState<string>();
