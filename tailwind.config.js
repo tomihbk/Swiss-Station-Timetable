@@ -8,7 +8,11 @@ module.exports = {
       'secondary': 'Inter UI, Inter, sans-serif'
     },
     minWidth: {
-      'min-suggested-station-card': '20em'
+      'min-suggested-station-card': '20em',
+      '1/4': '25%',
+      '1/2': '50%',
+      '3/4': '75%',
+      'full': '100%',
     },
     extend: {
     },
