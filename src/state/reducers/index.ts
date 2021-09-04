@@ -8,4 +8,4 @@ const reducer = combineReducers({
 
 export default reducer
 
-export type State = ReturnType<typeof reducer>
+export type ReducerStateType = ReturnType<typeof reducer>
