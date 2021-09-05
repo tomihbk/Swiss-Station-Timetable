@@ -9,10 +9,11 @@ import { ReactComponent as ClockIcon } from "../images/clock.svg";
 import { ReactComponent as DirectionIcon } from "../images/direction.svg";
 import { ReactComponent as DocumentIcon } from "../images/document.svg";
 import { ReactComponent as ScrollDownIcon } from "../images/scrolldown.svg";
-import { useHistory } from 'react-router-dom'
+import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators } from "../state";
+import { ApiBodyTypeData } from '../state/action-types/index'
 
 const SearchForm = (): React.ReactElement => {
   interface FilteredDataType {
@@ -21,21 +22,9 @@ const SearchForm = (): React.ReactElement => {
   }
   [];
 
-  interface ApiBodyTypeData {
-    RequestorReference: string;
-    RequestCurrentTimeStamp?: string;
-    StopPlaceReference: string;
-    NumberOfResult: string;
-    ArrivalOrDepature: string;
-    ArrivalOrDepatureTime: string;
-    EnableRealTimeData: string;
-    IncludePreviousCalls: string;
-    IncludeOnwardCalls: string;
-  }
-
-  const history = useHistory()
+  const history = useHistory();
   const now = moment().format("HH:mm:ss");
-  
+
   const [filteredData, setFilteredData] = useState<FilteredDataType[]>();
   const [apiBodyData, setApiBodyData] = useState<ApiBodyTypeData>();
   const [numberOfResults, setNumberOfResults] = useState<string>();
@@ -52,7 +41,7 @@ const SearchForm = (): React.ReactElement => {
 
   const dispatch = useDispatch();
 
-  const { addTrips } = bindActionCreators(actionCreators, dispatch);
+  const { addTrips, addApiRequest } = bindActionCreators(actionCreators, dispatch);
 
   const formClassStyle =
     "appearance-none bg-white dark:bg-gray-600 px-6 pr-16 rounded-lg text-sm focus:border-solid focus:border-blue-500 dark:focus:border-gray-200 focus:border-2 w-full h-20 transition duration-300 hover:cursor-pointer";
@@ -62,7 +51,7 @@ const SearchForm = (): React.ReactElement => {
       .toLowerCase()
       .normalize("NFD")
       .replace(/[^\w\s]/gi, "") //this removes special characters
-      .replace(/[\u0300-\u036f]/g, "") //this removes diacritics
+      .replace(/[\u0300-\u036f]/g, ""); //this removes diacritics
   };
   const filterHandler = (data: React.FormEvent<HTMLInputElement>) => {
     const searchedLocation = data.currentTarget.value;
@@ -121,9 +110,10 @@ const SearchForm = (): React.ReactElement => {
         data: apiBodyData,
       })
         .then(function (response) {
-          addTrips(response.data)
+          addTrips(response.data);
+          addApiRequest(apiBodyData)
           //console.log(response.data);
-          history.push('/trips')
+          history.push("/trips");
         })
         .catch(function (error) {
           console.log(error);
