@@ -1,9 +1,11 @@
 import { combineReducers } from "redux";
 import tripReducer from "./tripReducer";
+import apiReducer from "./apiReducer";
 
 
 const reducer = combineReducers({
-    trip: tripReducer
+    trip: tripReducer,
+    api: apiReducer
 })
 
 export default reducer

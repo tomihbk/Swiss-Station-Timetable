@@ -5,10 +5,8 @@ const initialState = {}
 
 const reducer = (state = initialState, action: Action) => {
     switch (action.type) {
-        case ActionType.ADD_TRIPS:
-            return { ...state, result: action.payload }
-        case ActionType.REMOVE_TRIPS:
-            return []
+        case ActionType.ADD_API_REQUEST:
+            return { ...state, data: action.payload }
         default:
             return state
     }
