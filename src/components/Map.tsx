@@ -10,7 +10,6 @@ interface MapPropType {
 
 const Map: React.FC<MapPropType> = ({
   height,
-  width,
   position,
   stationName,
 }: MapPropType): React.ReactElement => {
@@ -39,12 +38,10 @@ const Map: React.FC<MapPropType> = ({
   // Define the styles that are to be passed to the map instance:
   const mapStyles = {
     overflow: "hidden",
-    /* width: width || "100%",*/
     height: height || "30vh",
     borderRadius: "2em",
-    borderRadiusTopLeft: "0",
-    borderRadiusTopRight: "0",
-
+    borderTopLeftRadius: "0px",
+    borderTopRightRadius: "0px",
   };
 
   useEffect(() => {
@@ -55,14 +52,14 @@ const Map: React.FC<MapPropType> = ({
       layers: [Jawg_Streets],
     });
     const marker = L.marker(position || [46.94883, 7.43913]).addTo(map);
-    marker.bindPopup(`<b>${stationName}</b>`);
+    marker.bindPopup(`<b>${stationName.split("|")[0]}</b>`);
   }, []);
 
   return (
     <div>
       <div id="map" className="w-full" style={mapStyles}>
         <div
-          className="absolute bottom-0 left-5 font-display text-6xl font-bold text-black"
+          className="absolute bottom-3 left-5 font-display text-6xl font-bold text-black"
           style={{ zIndex: 500 }}
         >
           {stationName}
