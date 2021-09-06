@@ -1,39 +1,52 @@
 import { useSelector } from "react-redux";
 import Map from "../components/Map";
+import SearchFilter from "../components/SearchFilter";
 import Trip from "../components/Trip";
 import { ReducerStateType } from "../state";
+import { ReactComponent as RefreshIcon } from "../images/refresh.svg";
 
-const Result = (): React.ReactElement => {
+const Trips = (): React.ReactElement => {
   const trips: any = useSelector((state: ReducerStateType) => state.trip);
+  const apiRequest: any = useSelector((state: ReducerStateType) => state.api);
+
   let lat = 0;
   let lon = 0;
-    let stationName = "";
-    console.log(trips.status)
-  if (trips.status == undefined && trips.status != 404) {
+  let stationName = "";
+  if (trips.result && trips.result[0]) {
     lat =
-      trips[0].result.StopEventResponseContext.location.GeoLocation.latitude;
+      trips.result[0].StopEventResponseContext.location.GeoLocation.latitude;
     lon =
-      trips[0].result.StopEventResponseContext.location.GeoLocation.longitude;
-    stationName = trips[0].result.StopEventResponseContext.location.name;
+      trips.result[0].StopEventResponseContext.location.GeoLocation.longitude;
+    stationName = trips.result[0].RequestedStation.StartPoint;
   }
-  console.log(trips);
+
   return (
-    <div className=" dark:text-gray-200 font-secondary w-full h-full rounded-2xl">
-      {trips.status == undefined && trips.status != 404 ? (
+    <div className="dark:text-gray-200 font-secondary w-full h-full rounded-2xl">
+      {trips.result && trips.result[0] ? (
         <div className="mx-auto">
           <Map
-            stationName={ trips[0].result.StopEventResponseContext.IsItDeparture ? `${stationName} depatures` : `${stationName} arrivals`}
+            stationName={
+              trips.result[0].StopEventResponseContext.IsItDeparture
+                ? `${stationName} | Departures`
+                : `${stationName} | Arrivals`
+            }
             position={[lat, lon] || [46.94883, 7.43913]}
           />
-          {Object.values(trips).map((item: any, i) => {
-            return <Trip key={item.result.Id} data={item.result} />;
+          <SearchFilter />
+          {trips.result.map((item: any) => {
+            return <Trip key={item.Id} data={item} />;
           })}
         </div>
-      ) : (
-        <h1>No data for the selected station found</h1>
+      ) : (trips.result?.status === 404 || apiRequest.data === undefined ? "No data found" :
+        <div className="text-center">
+          <RefreshIcon className='w-40 mx-auto mb-4 animate-spin appearance-none bg-green-600 dark:bg-green-700 p-3 rounded-full text-md text-gray-100 font-bold' />
+          <span className="text-xl">Loading...</span>
+        </div>
+
+
       )}
     </div>
   );
 };
 
-export default Result;
+export default Trips;
