@@ -7,16 +7,16 @@ function App(): React.ReactElement {
   return (
     <Router>
       <div className="min-h-screen flex flex-col justify-center bg-gray-100 dark:bg-gray-800 transition duration-500" >
-       <ToggleTheme />
-      <Switch>
-        <Route exact path="/">
-          <Home />
-        </Route>
-        <Route path="/trips">
-          <Trips />
-        </Route>
+        <ToggleTheme />
+        <Switch>
+          <Route exact path="/">
+            <Home />
+          </Route>
+          <Route path="/trips">
+            <Trips />
+          </Route>
         </Switch>
-        </div>
+      </div>
     </Router>
   );
 }

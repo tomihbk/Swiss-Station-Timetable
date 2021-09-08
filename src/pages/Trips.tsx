@@ -4,6 +4,7 @@ import SearchFilter from "../components/SearchFilter";
 import Trip from "../components/Trip";
 import { ReducerStateType } from "../state";
 import { ReactComponent as RefreshIcon } from "../images/refresh.svg";
+import HomeButton from "../components/HomeButton";
 
 const Trips = (): React.ReactElement => {
   const trips: any = useSelector((state: ReducerStateType) => state.trip);
@@ -22,6 +23,7 @@ const Trips = (): React.ReactElement => {
 
   return (
     <div className="dark:text-gray-200 font-secondary w-full h-full rounded-2xl">
+      <HomeButton/>
       {trips.result && trips.result[0] ? (
         <div className="mx-auto">
           <Map
