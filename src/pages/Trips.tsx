@@ -32,7 +32,7 @@ const Trips = (): React.ReactElement => {
                 ? `${stationName} | Departures`
                 : `${stationName} | Arrivals`
             }
-            position={[lat, lon] || [46.94883, 7.43913]}
+            position={[lat, lon]}
           />
           <SearchFilter />
           {trips.result.map((item: any) => {
@@ -44,8 +44,6 @@ const Trips = (): React.ReactElement => {
           <RefreshIcon className='w-40 mx-auto mb-4 animate-spin appearance-none bg-green-600 dark:bg-green-700 p-3 rounded-full text-md text-gray-100 font-bold' />
           <span className="text-xl">Loading...</span>
         </div>
-
-
       )}
     </div>
   );

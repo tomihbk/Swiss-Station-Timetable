@@ -7,7 +7,7 @@ const stationsList = [
       "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof_Bern.jpg?q=45"
   },
     {
-    stationName: "Basel",
+    stationName: "Basel SBB",
     imageUrl:
       "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof_BaselSBB.jpg?q=45"
   },
@@ -22,7 +22,7 @@ const stationsList = [
       "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof-Lausanne.jpg?q=45"
   },
  {
-    stationName: "Zürich",
+    stationName: "Zürich HB",
     imageUrl:
       "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Zuerich-HB.jpg?q=45"
   }, 
