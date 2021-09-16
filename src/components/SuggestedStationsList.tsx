@@ -12,7 +12,7 @@ const stationsList = [
       "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof_BaselSBB.jpg?q=45"
   },
       {
-    stationName: "Geneva",
+    stationName: "Genève",
     imageUrl:
       "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof-Genf.jpg?q=45"
   },

@@ -84,7 +84,6 @@ const SearchForm = (): React.ReactElement => {
     const randIndex = Math.floor(
       Math.random() * Object.keys(stationsList).length
     );
-
     // Select a key from the array of keys using the random index
     return Object.values(stationsList)[randIndex].name;
   };
@@ -121,22 +120,18 @@ const SearchForm = (): React.ReactElement => {
     }
   }, [apiBodyData]);
 
+  useEffect(() => {
+    setArrivalOrDepartureTime(moment(`${selectedDate} ${selectedTime}`).format("YYYY-MM-DDTHH:mm:ss"));
+  }, [selectedDate, selectedTime])
+
   const search = async (
     e: React.FormEvent<HTMLFormElement> | undefined = undefined
   ) => {
     e?.preventDefault();
-    if (selectedDate && selectedTime) {
-      // <RequestTimestamp>2021-08-28T12:22:12.697Z</RequestTimestamp>
-      // Sets current time in UTC || Zulu time
-      setCurrentTimeStamp(moment.utc().format());
-
-      // <ojp:DepArrTime>2021-08-28T14:22:12</ojp:DepArrTime>
-      const dateTime = new Date(`${selectedDate} ${selectedTime}`);
-      setArrivalOrDepartureTime(moment(dateTime).format("YYYY-MM-DDTHH:mm:ss"));
-    }
 
     setArrivalOrDeparture(arrivalOrDeparture || undefined);
     setNumberOfResults(numberOfResults || undefined);
+    setCurrentTimeStamp(moment.utc().format());
 
     if (
       numberOfResults &&
@@ -144,6 +139,8 @@ const SearchForm = (): React.ReactElement => {
       arrivalOrDepartureTime &&
       stopPlaceReference
     ) {
+
+      console.log("final point arrivalOrDepartureTime", arrivalOrDepartureTime)
       setApiBodyData({
         RequestorReference: "Swiss Station Timetable",
         RequestCurrentTimeStamp: currentTimeStamp,
@@ -155,6 +152,7 @@ const SearchForm = (): React.ReactElement => {
         IncludePreviousCalls: "true",
         IncludeOnwardCalls: "true",
       });
+
     }
   };
 
@@ -185,17 +183,16 @@ const SearchForm = (): React.ReactElement => {
             </p>
           )}
           <div
-            className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${
-              filteredData && filteredData?.length === 1
-                ? "relative lg:grid-cols-1 lg:w-8/12"
-                : filteredData?.length === 2
+            className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${filteredData && filteredData?.length === 1
+              ? "relative lg:grid-cols-1 lg:w-8/12"
+              : filteredData?.length === 2
                 ? "relative lg:grid-cols-2 lg:w-8/12"
                 : filteredData?.length === 3
-                ? "relative lg:grid-cols-3 lg:w-8/12"
-                : filteredData?.length === 4
-                ? "relative lg:grid-cols-4"
-                : "lg:grid-cols-4"
-            } ${filteredData && filteredData?.length > 10 && "h-96 mt-4"}`}
+                  ? "relative lg:grid-cols-3 lg:w-8/12"
+                  : filteredData?.length === 4
+                    ? "relative lg:grid-cols-4"
+                    : "lg:grid-cols-4"
+              } ${filteredData && filteredData?.length > 10 && "h-96 mt-4"}`}
           >
             {filteredData?.length != 0 &&
               filteredData?.map((station: FilteredDataType, key) => {
