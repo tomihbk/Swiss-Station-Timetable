@@ -1,14 +1,19 @@
+import { useEffect } from "react";
 import { useSelector } from "react-redux";
-import Map from "../components/Map";
-import SearchFilter from "../components/SearchFilter";
-import Trip from "../components/Trip";
 import { ReducerStateType } from "../state";
 import { ReactComponent as RefreshIcon } from "../images/refresh.svg";
 import HomeButton from "../components/HomeButton";
+import Map from "../components/Map";
+import SearchFilter from "../components/SearchFilter";
+import Trip from "../components/Trip";
 
 const Trips = (): React.ReactElement => {
   const trips: any = useSelector((state: ReducerStateType) => state.trip);
   const apiRequest: any = useSelector((state: ReducerStateType) => state.api);
+
+  useEffect(() => {
+    window.scroll(0,0)
+  }, [])
 
   let lat = 0;
   let lon = 0;
