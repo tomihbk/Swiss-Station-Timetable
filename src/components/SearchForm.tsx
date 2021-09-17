@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import moment from "moment";
 import isItFirefox from "../util/isItFirefox";
 import stationsList from "../data/stationlist";
-import axios from "axios";
+import { AxiosResponse } from "axios";
 import { ReactComponent as SearchIcon } from "../images/search.svg";
 import { ReactComponent as CalendarIcon } from "../images/calendar.svg";
 import { ReactComponent as ClockIcon } from "../images/clock.svg";
@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import { bindActionCreators } from "redux";
 import { actionCreators } from "../state";
 import { ApiBodyTypeData } from '../state/action-types/index'
+import apiCaller from "../util/apiCaller";
 
 const SearchForm = (): React.ReactElement => {
   interface FilteredDataType {
@@ -100,23 +101,13 @@ const SearchForm = (): React.ReactElement => {
 
   useEffect(() => {
     if (apiBodyData) {
-      axios({
-        method: "post",
-        url: "http://localhost:3010/v1/transport/",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        data: apiBodyData,
+      apiCaller(apiBodyData, (res: AxiosResponse) => {
+        addTrips(res.data);
+        addApiRequest(apiBodyData)
+        history.push("/trips");
+      }, (err: AxiosResponse) => {
+        console.log(err);
       })
-        .then(function (response) {
-          addTrips(response.data);
-          addApiRequest(apiBodyData)
-          //console.log(response.data);
-          history.push("/trips");
-        })
-        .catch(function (error) {
-          console.log(error);
-        });
     }
   }, [apiBodyData]);
 
