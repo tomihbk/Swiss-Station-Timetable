@@ -4,8 +4,8 @@ module.exports = {
   darkMode: 'class', // or 'media' or 'class'
   theme: {
     fontFamily: {
-      'display': 'HK Grotesk, Roboto, Helvetica, sans-serif',
-      'secondary': 'Inter UI, Inter, sans-serif'
+      'display': 'HKGrotesk-Regular, Roboto, Helvetica, sans-serif',
+      'secondary': 'Inter, Roboto, Helvetica, Arial, sans-serif'
     },
     minWidth: {
       'min-suggested-station-card': '20em',
