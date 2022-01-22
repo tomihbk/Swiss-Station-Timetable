@@ -1,4 +1,6 @@
+import anime from "animejs";
 import moment from "moment";
+import { useEffect, useRef } from "react";
 import { ReactComponent as TrainSVG } from "../images/train.svg";
 
 const Trip = ({ data }: any): React.ReactElement => {
@@ -9,7 +11,47 @@ const Trip = ({ data }: any): React.ReactElement => {
   let isEstimatedArrivalAvailable = false
   let deltaBetweenTimetableEstimatedArrival = 0
 
-  console.log("data.RequestedStation.EstimatedPlatform", data.RequestedStation.EstimatedPlatform == undefined)
+  let DelayBetweenNowAndStartTrip = 0
+  let TotalTripDurationMS = 0
+
+  const parentRef = useRef<HTMLDivElement>(null);
+  const currentTime = moment()
+  const startTime = data.Origin.IsAvailable ? moment(data.Origin.ServiceDeparture.TimetabledTime) : moment(data.RequestedStation.ServiceDeparture.TimetabledTime)
+  const endTime = moment(data.Destination.ServiceArrival.TimetabledTime)
+  console.log("EndTime ", moment(data.Destination.ServiceArrival.TimetabledTime).format("HH:mm"))
+  DelayBetweenNowAndStartTrip = startTime.diff(currentTime, 'millisecond') < 0 ? 0 : startTime.diff(currentTime, 'millisecond')
+  TotalTripDurationMS = endTime.diff(startTime, 'millisecond')
+
+  let widthSize: any = 0
+  let startJourney = 0
+
+  useEffect(() => {
+    widthSize = parentRef.current?.offsetWidth
+    const diffBetweenTripStartAndNowMS = startTime.diff(currentTime, 'millisecond')
+    console.log("div width", widthSize)
+    const totalDurationTripPixel = widthSize
+
+    console.log("startTime ", startTime.format("HH:mm"))
+    console.log("difference startJourney and now : ", startTime.diff(currentTime, 'minutes'))
+
+    startJourney = Math.abs(Math.round((diffBetweenTripStartAndNowMS * totalDurationTripPixel) / TotalTripDurationMS))
+
+    const divTarget = `#tripprogress-${data.Id.substring(0, 11)}`
+
+    console.log([`${startJourney}px`, `${widthSize - 50}px`])
+    //startJourney = startJourney > widthSize - 50 ? widthSize - 50 : startJourney
+    startJourney = startJourney > widthSize ? widthSize - 4 : startJourney
+    anime({
+      targets: divTarget,//divTarget,
+      delay: DelayBetweenNowAndStartTrip,
+      //translateX: [`${Math.abs(startJourney)}px`, `${Math.abs(widthSize - 50)}px`],
+      width: [`${Math.abs(startJourney)}px`, `${Math.abs(widthSize)}px`],
+      direction: 'alternate',
+      duration: TotalTripDurationMS - diffBetweenTripStartAndNowMS,
+      easing: 'linear'
+    });
+
+  }, [])
 
   if (Object.prototype.hasOwnProperty.call(data.RequestedStation.ServiceDeparture, "EstimatedTime")) {
 
@@ -49,7 +91,7 @@ const Trip = ({ data }: any): React.ReactElement => {
               `${data.RequestedStation.StartPoint} ${String.fromCodePoint(10230)} ${data.Destination.EndPointName}` :
               `${data.Origin.PointName} ${String.fromCodePoint(10230)} ${data.RequestedStation.StartPoint}`}
           </div>
-          <div className="details flex flex-row flex-wrap text-center py-3 my-3 bg-gray-100 dark:bg-gray-600 rounded-xl">
+          <div className="details flex flex-row flex-wrap md:text-center pl-3 md:pl-0 py-3 my-3 bg-gray-100 dark:bg-gray-600 rounded-xl">
             <div className="time min-w-1/2">
               {data.StopEventResponseContext.IsItDeparture ? "Departure" : "Arrival"} :{" "}
               <span className="font-semibold"> {moment(data.StopEventResponseContext.IsItDeparture ?
@@ -57,13 +99,14 @@ const Trip = ({ data }: any): React.ReactElement => {
                 data.RequestedStation.ServiceArrival.TimetabledTime
               ).format("HH:mm")}</span>
             </div>
-            <div className="platform min-w-1/2">
-              {/* Some trips include two arrival dynamic platforms, for ex. platform 44/45, so in order to identify those types, I just look if the data includes a "/". If that's the case, I don't have to tell the user that a platform change has occurred */}
-              Platform : <span className={`font-semibold ${data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") && 'text-red-500'}`}>
-                {data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") ?
-                  data.RequestedStation.EstimatedPlatform + ' | Platform change' :
-                  data.RequestedStation.PlannedPlatform} </span>
-            </div>
+            {data.RequestedStation.PlannedPlatform != undefined &&
+              <div className="platform min-w-1/2">
+                {/* Some trips include two dynamic arrival platforms, for ex. platform 44/45, so in order to identify those types, I just look if the data includes a "/". If that's the case, I don't have to tell the user that a platform change has occurred */}
+                Platform : <span className={`font-semibold ${data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") && 'text-red-500'}`}>
+                  {data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") ?
+                    data.RequestedStation.EstimatedPlatform + ' | Platform change' :
+                    data.RequestedStation.PlannedPlatform} </span>
+              </div>}
             <div className="date min-w-1/2">
               Date : <span className="font-semibold"> {moment(data.RequestedStation.OperatingDay).format("DD-MM-YY")}</span>
             </div>
@@ -80,7 +123,7 @@ const Trip = ({ data }: any): React.ReactElement => {
         </div>}
       </div>
       <div
-        className={`trainpath hidden ${data.Origin.IsAvailable && data.RequestedStation.StartPointRef != data.Destination.EndPointRef ? "grid-cols-3" : "grid-cols-2"
+        className={`trainpath relative hidden ${data.Origin.IsAvailable && data.RequestedStation.StartPointRef != data.Destination.EndPointRef ? "grid-cols-3" : "grid-cols-2"
           } border-t-2 border-gray-200 dark:border-gray-600 py-2 md:grid`}
       >
         {data.Origin.IsAvailable && (
@@ -112,6 +155,12 @@ const Trip = ({ data }: any): React.ReactElement => {
             </div>
           </div>}
 
+      </div>
+      <div ref={parentRef} className="animated-transport relative">
+        <div className="w-full">
+          {/* <TrainSVG id={`train-${data.Id.substring(0, 11)}`} className="relative w-12 stroke bg-blue-100 text-blue-700 dark:text-white dark:bg-blue-600 p-2 rounded-lg" /> */}
+          <div id={`tripprogress-${data.Id.substring(0, 11)}`} className="bg-blue-600 h-1 w-3 rounded-full"></div>
+        </div>
       </div>
     </div>
   );
