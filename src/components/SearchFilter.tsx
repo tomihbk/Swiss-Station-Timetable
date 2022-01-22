@@ -58,7 +58,7 @@ const SearchFilter = (): React.ReactElement => {
         }
     }
     return (
-        <form onSubmit={refreshResult}>
+        <form onSubmit={refreshResult} className="lg:sticky lg:top-0" style={{ zIndex: 999 }}>
             <div className="pt-2 mx-auto my-6 text-gray-800 dark:text-gray-50 filter drop-shadow-md w-8/12 md:w-9/12 lg:w-10/12 font-secondary">
                 <div className="flex flex-row flex-wrap justify-center gap-3 relative mb-6 mx-auto w-full lg:w-8/12">
 
