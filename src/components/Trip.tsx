@@ -62,7 +62,8 @@ const Trip = ({ data }: any): React.ReactElement => {
               Platform : <span className={`font-semibold ${data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") && 'text-red-500'}`}>
                 {data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") ?
                   data.RequestedStation.EstimatedPlatform + ' | Platform change' :
-                  data.RequestedStation.PlannedPlatform} </span>
+                  data.RequestedStation.PlannedPlatform || 'NA'}
+              </span>
             </div>
             <div className="date min-w-1/2">
               Date : <span className="font-semibold"> {moment(data.RequestedStation.OperatingDay).format("DD-MM-YY")}</span>
