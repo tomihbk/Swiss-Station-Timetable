@@ -57,7 +57,3 @@ code {
   -ms-overflow-style: none; /* IE and Edge */
   scrollbar-width: none; /* Firefox */
 }
-
-select, option {
-  font-family: Inter;
-}
