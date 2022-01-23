@@ -59,7 +59,7 @@ const Map: React.FC<MapPropType> = ({
     <div>
       <div id="map" className="w-full" style={mapStyles}>
         <div
-          className="absolute bottom-3 left-5 font-display text-6xl font-bold text-black"
+          className="absolute bottom-5 md:bottom-3 left-5 font-display text-4xl md:text-6xl font-bold text-black"
           style={{ zIndex: 500 }}
         >
           {stationName}
