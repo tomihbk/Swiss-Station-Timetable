@@ -73,7 +73,10 @@ const SearchForm = (): React.ReactElement => {
           lowerCaseAndNoDiacritic(data.currentTarget.value)
         )
       );
-
+      // If I want to filter the search result by station id
+      // filteredStations.sort((a, b)=>{ 
+      //   return a.id - b.id
+      // })
       setFilteredData(filteredStations);
     } else {
       setFilteredData([]);
