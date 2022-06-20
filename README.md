@@ -6,4 +6,4 @@ Home page : (design not final)
 ![Swiss Station Timetable](https://user-images.githubusercontent.com/18231519/132102789-cf2a4286-3890-4853-ab4f-0683aafac9ee.jpg)
 
 Trips page : (design not final)
-![bern departures](https://user-images.githubusercontent.com/18231519/132103113-018b0689-b9e8-455a-851f-87fa48c77a1c.jpg)
+![swiss-timetable-trips](https://user-images.githubusercontent.com/18231519/173446460-5dbe3ab7-8a80-48a5-bfed-62263c5b4ef0.png)
