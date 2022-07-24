@@ -14,6 +14,7 @@ export const useDarkMode = (): readonly ["dark" | "light", React.Dispatch<any>] 
 
     root.classList.remove(colorTheme);
     root.classList.add(theme);
+    root.style.colorScheme = theme;
 
     localStorage.setItem("theme", theme);
   });
