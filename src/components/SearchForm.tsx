@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
-import isItFirefox from "../util/isItFirefox";
 import stationsList from "../data/stationlist";
 import { AxiosResponse } from "axios";
 import { ReactComponent as SearchIcon } from "../images/search.svg";
@@ -211,9 +210,7 @@ const SearchForm = (): React.ReactElement => {
               name="date"
               onChange={(e) => setSelectedDate(e.currentTarget.value)}
             ></input>
-            {!isItFirefox() || (
-              <CalendarIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />
-            )}
+            {<CalendarIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />}
           </div>
 
           <div className="relative">
@@ -225,9 +222,7 @@ const SearchForm = (): React.ReactElement => {
               name="time"
               onChange={(e) => setSelectedTime(e.currentTarget.value)}
             ></input>
-            {!isItFirefox() || (
-              <ClockIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />
-            )}
+            {<ClockIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />}
           </div>
 
           <div className="relative">
@@ -245,9 +240,7 @@ const SearchForm = (): React.ReactElement => {
               <option value="departure">Departure</option>
               <option value="arrival">Arrival</option>
             </select>
-            {!isItFirefox() || (
-              <DirectionIcon className="absolute right-0 top-0 fill-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />
-            )}
+            {<DirectionIcon className="absolute right-0 top-0 fill-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />}
           </div>
 
           <div className="relative">
@@ -268,9 +261,7 @@ const SearchForm = (): React.ReactElement => {
               <option value="30">30 results</option>
               <option value="50">50 results</option>
             </select>
-            {!isItFirefox() || (
-              <DocumentIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />
-            )}
+            {<DocumentIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />}
           </div>
           <div className="relative md:col-span-2 mt-2">
             <input
