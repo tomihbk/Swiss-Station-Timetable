@@ -1,5 +1,5 @@
 import moment from "moment";
-import { ReactComponent as TrainSVG } from "../images/train.svg";
+import TransportIcon from "./TransportIcon";
 
 const Trip = ({ data }: any): React.ReactElement => {
 
@@ -36,10 +36,10 @@ const Trip = ({ data }: any): React.ReactElement => {
     <div className="bg-white pr-4 md:pr-0 dark:bg-gray-700 pt-4 pb-2 mx-auto w-5/6 md:w-4/6 flex flex-col filter drop-shadow-md rounded-xl text-sm my-5">
       <div className="grid grid-cols-4 md:grid-cols-6">
         <div className="icon flex flex-col justify-center items-center">
-          <div className="type">
+          {/* <div className="type">
             {data.RequestedStation.TransportMethod.PtMode}
-          </div>
-          <TrainSVG className="w-12 stroke bg-blue-100 text-blue-700 dark:text-white dark:bg-blue-600 p-2 rounded-lg" />
+          </div> */}
+          <TransportIcon type={data.RequestedStation.TransportMethod.PtMode} className="w-12 fill fill-current bg-blue-100 text-blue-600 dark:text-gray-100 dark:bg-blue-600 p-2 rounded-lg" />
           <div className="trainnumber text-red-700 bg-red-100 dark:text-gray-100 dark:bg-red-700 px-3 rounded-full font-bold italic my-2">
             {data.RequestedStation.PublishedLineName}
           </div>
