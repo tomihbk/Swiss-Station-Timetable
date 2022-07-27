@@ -33,7 +33,7 @@ const Trip = ({ data }: any): React.ReactElement => {
   }
 
   return (
-    <div className="bg-white pr-4 md:pr-0 dark:bg-gray-700 pt-4 pb-2 mx-auto w-5/6 md:w-4/6 flex flex-col filter drop-shadow-md rounded-xl text-sm my-5">
+    <div className={`bg-white pr-4 md:pr-0 dark:bg-gray-700  ${data.RequestedStation.IsTripCancelled && "border-2 border-red-600 border-dotted"} pt-4 pb-2 mx-auto w-5/6 md:w-4/6 flex flex-col filter drop-shadow-md rounded-xl text-sm my-5`}>
       <div className="grid grid-cols-4 md:grid-cols-6">
         <div className="icon flex flex-col justify-center items-center">
           {/* <div className="type">
@@ -75,11 +75,14 @@ const Trip = ({ data }: any): React.ReactElement => {
             </div>
           </div>
         </div>
-        {data.StopEventResponseContext.IsItDeparture && <div className={`status col-span-4 md:col-span-1 flex flex-col justify-center items-center ${deltaBetweenTimetableEstimatedDeparture > 0 ? 'text-red-500' : 'text-green-500'} font-bold text-base`}>
+        {!data.RequestedStation.IsTripCancelled && data.StopEventResponseContext.IsItDeparture && <div className={`status col-span-4 md:col-span-1 flex flex-col justify-center items-center ${deltaBetweenTimetableEstimatedDeparture > 0 ? 'text-red-500' : 'text-green-500'} font-bold text-base`}>
           {deltaBetweenTimetableEstimatedDeparture > 0 ? `+${deltaBetweenTimetableEstimatedDeparture} min` : 'On Time'}
         </div>}
-        {!data.StopEventResponseContext.IsItDeparture && <div className={`status col-span-4 md:col-span-1 flex flex-col justify-center items-center ${deltaBetweenTimetableEstimatedArrival > 0 ? 'text-red-500' : 'text-green-500'} font-bold text-base`}>
+        {!data.RequestedStation.IsTripCancelled && !data.StopEventResponseContext.IsItDeparture && <div className={`status col-span-4 md:col-span-1 flex flex-col justify-center items-center ${deltaBetweenTimetableEstimatedArrival > 0 ? 'text-red-500' : 'text-green-500'} font-bold text-base`}>
           {deltaBetweenTimetableEstimatedArrival > 0 ? `+${deltaBetweenTimetableEstimatedArrival} min` : 'On Time'}
+        </div>}
+        {data.RequestedStation.IsTripCancelled && <div className={"status col-span-4 md:col-span-1 flex flex-col justify-center items-center text-red-500 font-bold text-base"}>
+          {'Cancelled'}
         </div>}
       </div>
       <div
