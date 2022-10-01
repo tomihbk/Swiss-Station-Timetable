@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
-import stationsList from "../data/stationlist";
+import * as stationsListData from "../data/stationlist.json"
 import { AxiosResponse } from "axios";
 import { ReactComponent as SearchIcon } from "../images/search.svg";
 import { ReactComponent as CalendarIcon } from "../images/calendar.svg";
@@ -25,6 +25,8 @@ const SearchForm = (): React.ReactElement => {
   const history = useHistory();
   const now = moment().format("HH:mm:ss");
 
+  const stationsList = stationsListData
+
   const [filteredData, setFilteredData] = useState<FilteredDataType[]>();
   const [apiBodyData, setApiBodyData] = useState<ApiBodyTypeData>();
   const [numberOfResults, setNumberOfResults] = useState<string>();
@@ -46,12 +48,12 @@ const SearchForm = (): React.ReactElement => {
   const formClassStyle =
     "appearance-none bg-white dark:bg-gray-600 px-6 pr-16 rounded-lg text-sm focus:border-solid focus:border-blue-500 dark:focus:border-gray-200 focus:border-2 w-full h-20 transition duration-300 hover:cursor-pointer";
 
-  const lowerCaseAndNoDiacritic = (word: string): string => {
-    return word
+  const lowerCaseAndNoDiacritic = (word: (string | null)): string => {
+    return word != undefined ? word
       .toLowerCase()
       .normalize("NFD")
       .replace(/[^\w\s]/gi, "") //this removes special characters
-      .replace(/[\u0300-\u036f]/g, ""); //this removes diacritics
+      .replace(/[\u0300-\u036f]/g, "") : ""; //this removes diacritics
   };
   const filterHandler = (data: React.FormEvent<HTMLInputElement>) => {
     const searchedLocation = data.currentTarget.value;
@@ -60,8 +62,10 @@ const SearchForm = (): React.ReactElement => {
     if (searchedLocation.length > 2) {
       // This makes sure that the results start with the first input letter
       // For ex. Bern -> all results must start by the letter B, we don't need results that contain the letter B in the middle
-      const filterStationFirstLetter = stationsList.filter((station) =>
+      const filterStationFirstLetter = Object.values(stationsList).filter((station) =>
         lowerCaseAndNoDiacritic(station.name).startsWith(
+          lowerCaseAndNoDiacritic(searchedLocation[0])
+        ) || lowerCaseAndNoDiacritic(station.longname).startsWith(
           lowerCaseAndNoDiacritic(searchedLocation[0])
         )
       );
@@ -69,6 +73,9 @@ const SearchForm = (): React.ReactElement => {
       // Filtered results from the function above
       const filteredStations = filterStationFirstLetter.filter((station) =>
         lowerCaseAndNoDiacritic(station.name).includes(
+          lowerCaseAndNoDiacritic(data.currentTarget.value)
+        ) || 
+        lowerCaseAndNoDiacritic(station.longname).includes(
           lowerCaseAndNoDiacritic(data.currentTarget.value)
         )
       );
