@@ -1,6 +1,5 @@
 import { useEffect, useState } from "react";
 import moment from "moment";
-import * as stationsListData from "../data/stationlist.json"
 import { AxiosResponse } from "axios";
 import { ReactComponent as SearchIcon } from "../images/search.svg";
 import { ReactComponent as CalendarIcon } from "../images/calendar.svg";
@@ -20,26 +19,30 @@ const SearchForm = (): React.ReactElement => {
     id: number;
     name: string;
   }
-  [];
+
+  interface StationListDataType extends FilteredDataType {
+    longname?: string;
+  }
+
+  useEffect(() => {
+    search();
+    getStations();
+  }, []);
 
   const history = useHistory();
   const now = moment().format("HH:mm:ss");
 
-  const stationsList = stationsListData
-
-  const [filteredData, setFilteredData] = useState<FilteredDataType[]>();
+  const [stationsList, setStationsList] = useState<StationListDataType[]>();
+  const [filteredStationData, setFilteredStationData] = useState<FilteredDataType[]>();
   const [apiBodyData, setApiBodyData] = useState<ApiBodyTypeData>();
   const [numberOfResults, setNumberOfResults] = useState<string>();
   const [searchedStation, setSearchedStation] = useState<string>();
   const [arrivalOrDeparture, setArrivalOrDeparture] = useState<string>();
-  const [arrivalOrDepartureTime, setArrivalOrDepartureTime] =
-    useState<string>();
+  const [arrivalOrDepartureTime, setArrivalOrDepartureTime] = useState<string>();
   const [stopPlaceReference, setStopPlaceReference] = useState<string>();
   const [currentTimeStamp, setCurrentTimeStamp] = useState<string>();
   const [selectedTime, setSelectedTime] = useState<string>(now);
-  const [selectedDate, setSelectedDate] = useState<string>(
-    moment().format("yyyy-MM-DD")
-  );
+  const [selectedDate, setSelectedDate] = useState<string>(moment().format("yyyy-MM-DD"));
 
   const dispatch = useDispatch();
 
@@ -48,7 +51,7 @@ const SearchForm = (): React.ReactElement => {
   const formClassStyle =
     "appearance-none bg-white dark:bg-gray-600 px-6 pr-16 rounded-lg text-sm focus:border-solid focus:border-blue-500 dark:focus:border-gray-200 focus:border-2 w-full h-20 transition duration-300 hover:cursor-pointer";
 
-  const lowerCaseAndNoDiacritic = (word: (string | null)): string => {
+  const lowerCaseAndNoDiacritic = (word: (string | undefined)): string => {
     return word != undefined ? word
       .toLowerCase()
       .normalize("NFD")
@@ -74,7 +77,7 @@ const SearchForm = (): React.ReactElement => {
       const filteredStations = filterStationFirstLetter.filter((station) =>
         lowerCaseAndNoDiacritic(station.name).includes(
           lowerCaseAndNoDiacritic(data.currentTarget.value)
-        ) || 
+        ) ||
         lowerCaseAndNoDiacritic(station.longname).includes(
           lowerCaseAndNoDiacritic(data.currentTarget.value)
         )
@@ -83,30 +86,37 @@ const SearchForm = (): React.ReactElement => {
       // filteredStations.sort((a, b)=>{ 
       //   return a.id - b.id
       // })
-      setFilteredData(filteredStations);
+      setFilteredStationData(filteredStations);
     } else {
-      setFilteredData([]);
+      setFilteredStationData([]);
     }
   };
 
   const randomStationName = (): string => {
     // Generate random index based on number of keys
     const randIndex = Math.floor(
-      Math.random() * Object.keys(stationsList).length
+      Math.random() * stationsList?.length
     );
     // Select a key from the array of keys using the random index
-    return Object.values(stationsList)[randIndex].name;
+    return stationsList ? stationsList[randIndex]?.name : "";
   };
 
   const selectStation = (data: FilteredDataType) => {
     setSearchedStation(data.name);
     setStopPlaceReference(data.id.toString());
-    setFilteredData([]);
+    setFilteredStationData([]);
   };
 
-  useEffect(() => {
-    search();
-  }, []);
+  const getStations = async () => {
+    await fetch(process.env.REACT_APP_STATIONS_LIST_URL, {
+      method: 'GET',
+      headers: { Accept: 'application/json' }
+    })
+      .then(res => Promise.all([res.status, res.json()]))
+      .then(([status, jsonData]) => {
+        setStationsList(jsonData)
+      });
+  }
 
   useEffect(() => {
     if (apiBodyData) {
@@ -175,7 +185,7 @@ const SearchForm = (): React.ReactElement => {
           </div>
         </div>
         <div className="relative mx-auto w-full lg:w-9/12">
-          {filteredData && filteredData?.length > 10 && (
+          {filteredStationData && filteredStationData?.length > 10 && (
             <p className="flex flex-row flex-wrap justify-center gap-4 text-sm text-gray-400 mb-3 -mt-3">
               <ScrollDownIcon className="animate-bounce w-4" />
               Scroll down for more result
@@ -183,19 +193,19 @@ const SearchForm = (): React.ReactElement => {
             </p>
           )}
           <div
-            className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${filteredData && filteredData?.length === 1
+            className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${filteredStationData && filteredStationData?.length === 1
               ? "relative lg:grid-cols-1 lg:w-8/12"
-              : filteredData?.length === 2
+              : filteredStationData?.length === 2
                 ? "relative lg:grid-cols-2 lg:w-8/12"
-                : filteredData?.length === 3
+                : filteredStationData?.length === 3
                   ? "relative lg:grid-cols-3 lg:w-8/12"
-                  : filteredData?.length === 4
+                  : filteredStationData?.length === 4
                     ? "relative lg:grid-cols-4"
                     : "lg:grid-cols-4"
-              } ${filteredData && filteredData?.length > 10 && "h-96 mt-4"}`}
+              } ${filteredStationData && filteredStationData?.length > 10 && "h-96 mt-4"}`}
           >
-            {filteredData?.length != 0 &&
-              filteredData?.map((station: FilteredDataType, key) => {
+            {filteredStationData?.length != 0 &&
+              filteredStationData?.map((station: FilteredDataType, key) => {
                 return (
                   <div
                     key={key}

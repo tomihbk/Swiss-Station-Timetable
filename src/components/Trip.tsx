@@ -9,8 +9,8 @@ const Trip = ({ data }: any): React.ReactElement => {
   let isEstimatedArrivalAvailable = false
   let deltaBetweenTimetableEstimatedArrival = 0
 
-  console.log("data.RequestedStation.EstimatedPlatform", data.RequestedStation.EstimatedPlatform)
-  console.log("data.RequestedStation.PlannedPlatform", data.RequestedStation.PlannedPlatform)
+  // console.log("data.RequestedStation.EstimatedPlatform", data.RequestedStation.EstimatedPlatform)
+  // console.log("data.RequestedStation.PlannedPlatform", data.RequestedStation.PlannedPlatform)
 
   if (Object.prototype.hasOwnProperty.call(data.RequestedStation.ServiceDeparture, "EstimatedTime")) {
 
@@ -62,9 +62,9 @@ const Trip = ({ data }: any): React.ReactElement => {
               {/* Some trips include two arrival dynamic platforms, for ex. platform 44/45, so in order to identify those types, I just look if the data includes a "/". If that's the case, I don't have to tell the user that a platform change has occurred */}
               Platform : <span className={`font-semibold ${data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") && 'text-red-500'}`}>
                 {data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") ?
-                  data.RequestedStation.EstimatedPlatform + ' | Platform change' : 
+                  data.RequestedStation.EstimatedPlatform + ' | Platform change' :
                   data.RequestedStation.EstimatedPlatform || data.RequestedStation.PlannedPlatform || 'NA'}
-                
+
               </span>
             </div>
             <div className="date min-w-1/2">
