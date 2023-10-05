@@ -3,18 +3,10 @@ import TransportIcon from "./TransportIcon";
 
 const Trip = ({ data }: any): React.ReactElement => {
 
-  let isEstimatedDepartureAvailable = false
   let deltaBetweenTimetableEstimatedDeparture = 0
-
-  let isEstimatedArrivalAvailable = false
   let deltaBetweenTimetableEstimatedArrival = 0
 
-  // console.log("data.RequestedStation.EstimatedPlatform", data.RequestedStation.EstimatedPlatform)
-  // console.log("data.RequestedStation.PlannedPlatform", data.RequestedStation.PlannedPlatform)
-
   if (Object.prototype.hasOwnProperty.call(data.RequestedStation.ServiceDeparture, "EstimatedTime")) {
-
-    isEstimatedDepartureAvailable = true
 
     const timetableDeparture = moment(data.RequestedStation.ServiceDeparture.TimetabledTime);
     const estimatedDeparture = moment(data.RequestedStation.ServiceDeparture.EstimatedTime);
@@ -23,8 +15,6 @@ const Trip = ({ data }: any): React.ReactElement => {
   }
 
   if (Object.prototype.hasOwnProperty.call(data.RequestedStation.ServiceArrival, "EstimatedTime")) {
-
-    isEstimatedArrivalAvailable = true
 
     const timetableArrival = moment(data.RequestedStation.ServiceArrival.TimetabledTime);
     const estimatedArrival = moment(data.RequestedStation.ServiceArrival.EstimatedTime);

@@ -7,16 +7,18 @@ import { ReactComponent as DirectionIcon } from "../images/direction.svg";
 import { ReactComponent as DocumentIcon } from "../images/document.svg";
 import { ReactComponent as RefreshIcon } from "../images/refresh.svg";
 
+import { store } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
-import { bindActionCreators } from "redux";
-import { actionCreators, ReducerStateType } from "../state";
 import { ApiBodyTypeData } from '../state/action-types/index'
+import { addTrips } from "../state/features/trip/tripSlice";
+
 import apiCaller from "../util/apiCaller";
 import isItFirefox from "../util/isItFirefox";
+import { updateAPIQuery } from "../state/features/api/apiSlice";
 
 const SearchFilter = (): React.ReactElement => {
-    const apiRequest:any = useSelector((state: ReducerStateType) => state.api);
-    const apiRequestData: ApiBodyTypeData = apiRequest.data
+    const {apiQuery} =  useSelector((store: any) => store.apiquery);
+    const apiRequestData: ApiBodyTypeData = apiQuery
 
     const [numberOfResults, setNumberOfResults] = useState<string>(apiRequestData.NumberOfResult);
     const [arrivalOrDeparture, setArrivalOrDeparture] = useState<string>(apiRequestData.ArrivalOrDepature);
@@ -25,16 +27,11 @@ const SearchFilter = (): React.ReactElement => {
 
     const dispatch = useDispatch();
 
-    const { addTrips, removeTrips } = bindActionCreators(actionCreators, dispatch);
-
     const formClassStyle =
         "appearance-none bg-white dark:bg-gray-600 px-6 pr-16 rounded-lg text-sm focus:border-solid focus:border-blue-500 dark:focus:border-gray-200 focus:border-2 w-full h-14 transition duration-300 hover:cursor-pointer";
 
     const refreshResult = async (e: React.FormEvent<HTMLFormElement>) => {
         e?.preventDefault();
-
-        apiRequestData.NumberOfResult = numberOfResults
-        apiRequestData.ArrivalOrDepature = arrivalOrDeparture
 
         const hour: number = moment(selectedTime, "HH:mm:ss").hour()
         const minute: number = moment(selectedTime, "HH:mm:ss").minute()
@@ -42,20 +39,22 @@ const SearchFilter = (): React.ReactElement => {
         const dateTime = moment(apiRequestData.ArrivalOrDepatureTime, "YYYY-MM-DDTHH:mm:ss");
         dateTime.set({ h: hour, m: minute, s: second });
 
-        apiRequestData.ArrivalOrDepatureTime = dateTime.format("YYYY-MM-DDTHH:mm:ss")
-
-        removeTrips()
+        dispatch(updateAPIQuery({
+            NumberOfResult : numberOfResults,
+            ArrivalOrDepature: arrivalOrDeparture,
+            ArrivalOrDepatureTime: dateTime.format("YYYY-MM-DDTHH:mm:ss")
+        }))
 
         setLoading(true)
-        await apiCaller(apiRequestData, (res: AxiosResponse) => {
-            addTrips(res.data)
+        const updatedAPIQueryState:ApiBodyTypeData = store.getState().apiquery.apiQuery;
+
+        await apiCaller(updatedAPIQueryState, (res: AxiosResponse) => {
+            dispatch(addTrips(res.data))
         }, (err: AxiosResponse) => {
             console.log(err);
-        })
+        }).then(()=> setLoading(false))
 
-        return () => {
-            setLoading(false)
-        }
+            
     }
     return (
         <form onSubmit={refreshResult} className="lg:sticky lg:top-0" style={{ zIndex: 500 }}>
