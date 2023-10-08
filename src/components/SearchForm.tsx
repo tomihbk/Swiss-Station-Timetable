@@ -9,10 +9,10 @@ import { ReactComponent as DocumentIcon } from "../images/document.svg";
 import { ReactComponent as ScrollDownIcon } from "../images/scrolldown.svg";
 import { useHistory } from "react-router-dom";
 import { useDispatch } from "react-redux";
-import { bindActionCreators } from "redux";
-import { actionCreators } from "../state";
 import { ApiBodyTypeData } from '../state/action-types/index'
 import apiCaller from "../util/apiCaller";
+import { addTrips } from "../state/features/trip/tripSlice";
+import { addAPIQuery } from "../state/features/api/apiSlice";
 
 const SearchForm = (): React.ReactElement => {
   interface FilteredDataType {
@@ -45,8 +45,6 @@ const SearchForm = (): React.ReactElement => {
   const [selectedDate, setSelectedDate] = useState<string>(moment().format("yyyy-MM-DD"));
 
   const dispatch = useDispatch();
-
-  const { addTrips, addApiRequest } = bindActionCreators(actionCreators, dispatch);
 
   const formClassStyle =
     "appearance-none bg-white dark:bg-gray-600 px-6 pr-16 rounded-lg text-sm focus:border-solid focus:border-blue-500 dark:focus:border-gray-200 focus:border-2 w-full h-20 transition duration-300 hover:cursor-pointer";
@@ -121,8 +119,8 @@ const SearchForm = (): React.ReactElement => {
   useEffect(() => {
     if (apiBodyData) {
       apiCaller(apiBodyData, (res: AxiosResponse) => {
-        addTrips(res.data);
-        addApiRequest(apiBodyData)
+        dispatch(addTrips(res.data))
+        dispatch(addAPIQuery(apiBodyData))
         history.push("/trips");
       }, (err: AxiosResponse) => {
         console.log(err);
@@ -149,8 +147,6 @@ const SearchForm = (): React.ReactElement => {
       arrivalOrDepartureTime &&
       stopPlaceReference
     ) {
-
-      console.log("final point arrivalOrDepartureTime", arrivalOrDepartureTime)
       setApiBodyData({
         RequestorReference: "Swiss Station Timetable",
         RequestCurrentTimeStamp: currentTimeStamp,

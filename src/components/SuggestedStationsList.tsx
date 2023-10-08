@@ -2,11 +2,11 @@ import { AxiosResponse } from "axios";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
-import { bindActionCreators } from "redux";
-import { actionCreators } from "../state";
 import { ApiBodyTypeData } from "../state/action-types";
 import apiCaller from "../util/apiCaller";
 import SuggestedStation from "./SuggestedStation";
+import { addAPIQuery } from "../state/features/api/apiSlice";
+import { addTrips, clearTrips } from "../state/features/trip/tripSlice";
 
 const stationsList = [
   {
@@ -44,7 +44,6 @@ const stationsList = [
 const SuggestedStationsList = (): React.ReactElement => {
   const history = useHistory();
   const dispatch = useDispatch();
-  const { addTrips, addApiRequest } = bindActionCreators(actionCreators, dispatch);
 
   const apiBodyData: ApiBodyTypeData = {
     RequestorReference: "Swiss Station Timetable",
@@ -60,13 +59,9 @@ const SuggestedStationsList = (): React.ReactElement => {
 
   const showTrips = (id:string) => {
     apiBodyData.StopPlaceReference = id
-    apiCaller(apiBodyData, (res: AxiosResponse) => {
-      addTrips(res.data);
-      addApiRequest(apiBodyData)
-      history.push("/trips");
-    }, (err: AxiosResponse) => {
-      console.log(err);
-    })
+    dispatch(clearTrips())
+    dispatch(addAPIQuery(apiBodyData))
+    history.push("/trips");
   }
 
   return <div className="relative flex flex-wrap justify-center opacity-100 z-10 dark:opacity-90">
