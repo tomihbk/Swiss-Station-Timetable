@@ -7,7 +7,7 @@ import SearchFilter from "../components/SearchFilter";
 import Trip from "../components/Trip";
 import apiCaller from "../util/apiCaller";
 import { AxiosResponse } from "axios";
-import { addTrips } from "../state/features/trip/tripSlice";
+import { addTrips, clearTrips } from "../state/features/trip/tripSlice";
 import { useDispatch } from "react-redux";
 
 const Trips = (): React.ReactElement => {
@@ -20,13 +20,17 @@ const Trips = (): React.ReactElement => {
   useEffect(() => {
     window.scroll(0,0)
     
-    // This checks if apiQuery is not empty before running the apirequest
-    if(Object.getOwnPropertyNames(apiQuery).length != 0){
-      apiCaller(apiQuery, (res: AxiosResponse) => {
+    const fetchTrips = async ()=>{
+      await apiCaller(apiQuery, (res: AxiosResponse) => {
+        dispatch(clearTrips())
         dispatch(addTrips(res.data))
       }, (err: AxiosResponse) => {
         console.log(err);
       })
+    }
+    // This checks if apiQuery is not empty before running the apirequest
+    if(Object.getOwnPropertyNames(apiQuery).length != 0){
+      fetchTrips()
     }
   }, [])
 

@@ -6,7 +6,7 @@ import { ApiBodyTypeData } from "../state/action-types";
 import apiCaller from "../util/apiCaller";
 import SuggestedStation from "./SuggestedStation";
 import { addAPIQuery } from "../state/features/api/apiSlice";
-import { addTrips } from "../state/features/trip/tripSlice";
+import { addTrips, clearTrips } from "../state/features/trip/tripSlice";
 
 const stationsList = [
   {
@@ -59,6 +59,7 @@ const SuggestedStationsList = (): React.ReactElement => {
 
   const showTrips = (id:string) => {
     apiBodyData.StopPlaceReference = id
+    dispatch(clearTrips())
     dispatch(addAPIQuery(apiBodyData))
     history.push("/trips");
   }

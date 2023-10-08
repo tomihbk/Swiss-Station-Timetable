@@ -10,7 +10,7 @@ import { ReactComponent as RefreshIcon } from "../images/refresh.svg";
 import { store } from "../state/store";
 import { useDispatch, useSelector } from "react-redux";
 import { ApiBodyTypeData } from '../state/action-types/index'
-import { addTrips } from "../state/features/trip/tripSlice";
+import { addTrips, clearTrips } from "../state/features/trip/tripSlice";
 
 import apiCaller from "../util/apiCaller";
 import isItFirefox from "../util/isItFirefox";
@@ -32,7 +32,7 @@ const SearchFilter = (): React.ReactElement => {
 
     const refreshResult = async (e: React.FormEvent<HTMLFormElement>) => {
         e?.preventDefault();
-
+        dispatch(clearTrips()) // By removing the data, the refresh function works
         const hour: number = moment(selectedTime, "HH:mm:ss").hour()
         const minute: number = moment(selectedTime, "HH:mm:ss").minute()
         const second: number = moment(selectedTime, "HH:mm:ss").second()
