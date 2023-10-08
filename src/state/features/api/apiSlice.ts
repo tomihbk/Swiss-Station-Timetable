@@ -14,11 +14,9 @@ const apiSlice = createSlice({
     },
     updateAPIQuery: (state, action) => {
       state.apiQuery = { ...state.apiQuery, ...action.payload };
-      console.log("updateAPIquery",state.apiQuery);
     }
   },
 });
-// console.log(apiSlice);
 
 export const { addAPIQuery, updateAPIQuery } = apiSlice.actions;
 export default apiSlice.reducer;

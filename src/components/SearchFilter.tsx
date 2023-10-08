@@ -23,7 +23,6 @@ const SearchFilter = (): React.ReactElement => {
     const [numberOfResults, setNumberOfResults] = useState<string>(apiRequestData.NumberOfResult);
     const [arrivalOrDeparture, setArrivalOrDeparture] = useState<string>(apiRequestData.ArrivalOrDepature);
     const [selectedTime, setSelectedTime] = useState<string>(moment(apiRequestData.ArrivalOrDepatureTime).format("HH:mm:ss"));
-    const [loading, setLoading] = useState<boolean>(false)
 
     const dispatch = useDispatch();
 
@@ -44,17 +43,13 @@ const SearchFilter = (): React.ReactElement => {
             ArrivalOrDepature: arrivalOrDeparture,
             ArrivalOrDepatureTime: dateTime.format("YYYY-MM-DDTHH:mm:ss")
         }))
-
-        setLoading(true)
         const updatedAPIQueryState:ApiBodyTypeData = store.getState().apiquery.apiQuery;
 
         await apiCaller(updatedAPIQueryState, (res: AxiosResponse) => {
             dispatch(addTrips(res.data))
         }, (err: AxiosResponse) => {
             console.log(err);
-        }).then(()=> setLoading(false))
-
-            
+        })
     }
     return (
         <form onSubmit={refreshResult} className="lg:sticky lg:top-0" style={{ zIndex: 500 }}>
@@ -120,7 +115,7 @@ const SearchFilter = (): React.ReactElement => {
                             type="submit"
                             className="appearance-none bg-green-600 dark:bg-green-700 p-3 rounded-full text-md text-gray-100 font-bold hover:bg-green-500 dark:hover:bg-green-500 hover:cursor-pointer transition duration-300"
                             value="Refresh"
-                        > <RefreshIcon className={`w-7 ${loading && 'animate-spin'}`} /></button>
+                        > <RefreshIcon className="w-7" /></button>
                     </div>
                 </div>
             </div>

@@ -15,8 +15,6 @@ const Trips = (): React.ReactElement => {
   const {trips}: any = useSelector((store: any) => store.trip);
   const {apiQuery}: any = useSelector((store: any) => store.apiquery);
 
-  console.log(trips, apiQuery)
-
   useEffect(() => {
     window.scroll(0,0)
     

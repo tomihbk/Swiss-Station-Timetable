@@ -147,8 +147,6 @@ const SearchForm = (): React.ReactElement => {
       arrivalOrDepartureTime &&
       stopPlaceReference
     ) {
-
-      console.log("final point arrivalOrDepartureTime", arrivalOrDepartureTime)
       setApiBodyData({
         RequestorReference: "Swiss Station Timetable",
         RequestCurrentTimeStamp: currentTimeStamp,

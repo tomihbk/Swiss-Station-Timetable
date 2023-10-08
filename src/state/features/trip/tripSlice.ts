@@ -11,7 +11,6 @@ const tripSlice = createSlice({
   reducers: {
     addTrips: (state, action) => {
       state.trips = action.payload;
-      console.log("tripslice",action.payload)
     },
     clearTrips: (state) => {
       state.trips = [];
