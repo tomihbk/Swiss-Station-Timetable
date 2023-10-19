@@ -1,8 +1,7 @@
 import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
-  trips: {},
-  size: 14445,
+  trips: {}
 };
 
 const tripSlice = createSlice({
