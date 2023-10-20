@@ -9,9 +9,11 @@ import apiCaller from "../util/apiCaller";
 import { AxiosResponse } from "axios";
 import { addTrips, clearTrips } from "../state/features/trip/tripSlice";
 import { useDispatch } from "react-redux";
+import { useHistory } from "react-router-dom";
 
 const Trips = (): React.ReactElement => {
   const dispatch = useDispatch();
+  const history = useHistory();
   const {trips}: any = useSelector((store: any) => store.trip);
   const {apiQuery}: any = useSelector((store: any) => store.apiquery);
 
@@ -31,6 +33,10 @@ const Trips = (): React.ReactElement => {
       fetchTrips()
     }
   }, [])
+
+  const goToHome = () =>{
+    history.push("/");
+  }
 
   let lat = 0;
   let lon = 0;
@@ -61,7 +67,7 @@ const Trips = (): React.ReactElement => {
             return <Trip key={item.Id} data={item} />;
           })}
         </div>
-      ) : (trips?.status === 404 || Object.getOwnPropertyNames(apiQuery).length === 0 ? "No data found" :
+      ) : (trips?.status === 404 || Object.getOwnPropertyNames(apiQuery).length === 0 ? goToHome() :
         <div className="text-center">
           <RefreshIcon className='w-40 mx-auto mb-4 animate-spin appearance-none bg-green-600 dark:bg-green-700 p-3 rounded-full text-md text-gray-100 font-bold' />
           <span className="text-xl">Loading...</span>

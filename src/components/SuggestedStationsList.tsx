@@ -1,12 +1,10 @@
-import { AxiosResponse } from "axios";
 import moment from "moment";
 import { useDispatch } from "react-redux";
 import { useHistory } from "react-router";
 import { ApiBodyTypeData } from "../state/action-types";
-import apiCaller from "../util/apiCaller";
 import SuggestedStation from "./SuggestedStation";
 import { addAPIQuery } from "../state/features/api/apiSlice";
-import { addTrips, clearTrips } from "../state/features/trip/tripSlice";
+import { clearTrips } from "../state/features/trip/tripSlice";
 
 const stationsList = [
   {
