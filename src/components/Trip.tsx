@@ -6,6 +6,15 @@ const Trip = ({ data }: any): React.ReactElement => {
   let deltaBetweenTimetableEstimatedDeparture = 0
   let deltaBetweenTimetableEstimatedArrival = 0
 
+  const totalTripDuration = (): string => {
+    const fullTripDurationMinutes = moment(data.Destination.ServiceArrival.TimetabledTime).diff(data.Origin.ServiceDeparture.TimetabledTime,"m")
+    const tripHour = Math.floor(fullTripDurationMinutes / 60)
+    const tripMinute = fullTripDurationMinutes % 60
+    return tripHour == 0 ? `${tripMinute} min` :
+    tripMinute == 0 ? `${tripHour} h` :
+    `${tripHour} h ${tripMinute} min`
+  }
+  
   if (Object.prototype.hasOwnProperty.call(data.RequestedStation.ServiceDeparture, "EstimatedTime")) {
 
     const timetableDeparture = moment(data.RequestedStation.ServiceDeparture.TimetabledTime);
@@ -50,10 +59,12 @@ const Trip = ({ data }: any): React.ReactElement => {
             </div>
             <div className="platform min-w-1/2">
               {/* Some trips include two arrival dynamic platforms, for ex. platform 44/45, so in order to identify those types, I just look if the data includes a "/". If that's the case, I don't have to tell the user that a platform change has occurred */}
-              Platform : <span className={`font-semibold ${data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") && 'text-red-500'}`}>
+              {data.RequestedStation.EstimatedPlatform || data.RequestedStation.PlannedPlatform ? "Platform" :
+               data.RequestedStation.TransportMethod.PtMode === "rail" ? "Platform" :  "Duration"} : <span className={`font-semibold ${data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") && 'text-red-500'}`}>
                 {data.RequestedStation.EstimatedPlatform != undefined && !data.RequestedStation.PlannedPlatform.includes("/") ?
                   data.RequestedStation.EstimatedPlatform + ' | Platform change' :
-                  data.RequestedStation.EstimatedPlatform || data.RequestedStation.PlannedPlatform || 'NA'}
+                  !data.RequestedStation.EstimatedPlatform && !data.RequestedStation.PlannedPlatform && data.RequestedStation.TransportMethod.PtMode === "rail" ?
+                   "NA" : data.RequestedStation.EstimatedPlatform || data.RequestedStation.PlannedPlatform || totalTripDuration()}
 
               </span>
             </div>
