@@ -110,8 +110,8 @@ const SearchForm = (): React.ReactElement => {
       method: 'GET',
       headers: { Accept: 'application/json' }
     })
-      .then(res => Promise.all([res.status, res.json()]))
-      .then(([status, jsonData]) => {
+      .then(res => Promise.all([res.json()]))
+      .then(([jsonData]) => {
         setStationsList(jsonData)
       });
   }

@@ -1,6 +1,7 @@
 import moment from "moment";
 import TransportIcon from "./TransportIcon";
 
+// eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
 const Trip = ({ data }: any): React.ReactElement => {
 
   let deltaBetweenTimetableEstimatedDeparture = 0
