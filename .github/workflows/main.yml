@@ -24,9 +24,10 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.SSH_PRIVATE_KEY }}
         port: ${{ secrets.SSH_PORT }}
+        passphrase: ${{ secrets.SSH_PASSPHRASE }}
         script: |
           sudo pm2 stop ${{ secrets.PM2_APP_NAME }}
           cd ${{ secrets.APP_PATH }}
-          git pull origin main
+          git pull origin master
           yarn build
           sudo pm2 start ${{ secrets.PM2_APP_NAME }}
