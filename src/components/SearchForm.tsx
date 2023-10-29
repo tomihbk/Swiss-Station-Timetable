@@ -26,7 +26,7 @@ const SearchForm = (): React.ReactElement => {
 
   useEffect(() => {
     search();
-    getStations();
+    getAllStations();
   }, []);
 
   const history = useHistory();
@@ -105,26 +105,34 @@ const SearchForm = (): React.ReactElement => {
     setFilteredStationData([]);
   };
 
-  const getStations = async () => {
-    await fetch(process.env.REACT_APP_STATIONS_LIST_URL, {
-      method: 'GET',
-      headers: { Accept: 'application/json' }
-    })
-      .then(res => Promise.all([res.json()]))
-      .then(([jsonData]) => {
-        setStationsList(jsonData)
-      });
+  const getAllStations = async () => {
+    try {
+      await fetch(process.env.REACT_APP_STATIONS_LIST_URL, {
+        method: 'GET',
+        headers: { Accept: 'application/json' }
+      })
+        .then(res => Promise.all([res.json()]))
+        .then(([jsonData]) => {
+          setStationsList(jsonData)
+        });
+    } catch (err) {
+      //console.log(err)
+    }
   }
 
   useEffect(() => {
-    if (apiBodyData) {
-      apiCaller(apiBodyData, (res: AxiosResponse) => {
-        dispatch(addTrips(res.data))
-        dispatch(addAPIQuery(apiBodyData))
-        history.push("/trips");
-      }, (err: AxiosResponse) => {
-        console.log(err);
-      })
+    try {
+      if (apiBodyData) {
+        apiCaller(apiBodyData, (res: AxiosResponse) => {
+          dispatch(addTrips(res.data))
+          dispatch(addAPIQuery(apiBodyData))
+          history.push("/trips");
+        }, (err: AxiosResponse) => {
+          console.log(err);
+        })
+      }
+    } catch (err) {
+      console.log(err)
     }
   }, [apiBodyData]);
 
