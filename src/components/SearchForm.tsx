@@ -14,25 +14,43 @@ import apiCaller from "../util/apiCaller";
 import { addTrips } from "../state/features/trip/tripSlice";
 import { addAPIQuery } from "../state/features/api/apiSlice";
 
+export const getAllStations = async () => {
+  try {
+    return await fetch(process.env.REACT_APP_STATIONS_LIST_URL, {
+      method: 'GET',
+      headers: { Accept: 'application/json' }
+    })
+      .then(res => Promise.all([res.json()]))
+      .then(([jsonData]) => jsonData)
+  } catch (err) {
+    //console.log(err)
+  }
+}
+
 const SearchForm = (): React.ReactElement => {
+
   interface FilteredDataType {
     id: number;
     name: string;
   }
-
+  
   interface StationListDataType extends FilteredDataType {
     longname?: string;
   }
 
+  const [stationsList, setStationsList] = useState<StationListDataType[]>();
+
   useEffect(() => {
     search();
-    getAllStations();
+    const fetchStations = async () =>{
+      setStationsList(await getAllStations())
+    }
+    fetchStations()
   }, []);
 
   const history = useHistory();
   const now = moment().format("HH:mm:ss");
-
-  const [stationsList, setStationsList] = useState<StationListDataType[]>();
+ 
   const [filteredStationData, setFilteredStationData] = useState<FilteredDataType[]>();
   const [apiBodyData, setApiBodyData] = useState<ApiBodyTypeData>();
   const [numberOfResults, setNumberOfResults] = useState<string>();
@@ -105,21 +123,6 @@ const SearchForm = (): React.ReactElement => {
     setFilteredStationData([]);
   };
 
-  const getAllStations = async () => {
-    try {
-      await fetch(process.env.REACT_APP_STATIONS_LIST_URL, {
-        method: 'GET',
-        headers: { Accept: 'application/json' }
-      })
-        .then(res => Promise.all([res.json()]))
-        .then(([jsonData]) => {
-          setStationsList(jsonData)
-        });
-    } catch (err) {
-      //console.log(err)
-    }
-  }
-
   useEffect(() => {
     try {
       if (apiBodyData) {
@@ -178,6 +181,7 @@ const SearchForm = (): React.ReactElement => {
             className="bg-white dark:bg-gray-600 px-6 pr-16 rounded-lg text-md border-solid focus:border-blue-500 focus:border-2 dark:focus:border-gray-200 w-full h-20 transition duration-300"
             type="search"
             name="search"
+            aria-label="station name"
             required
             value={searchedStation || ""}
             placeholder={`Search for a station for ex. : ${randomStationName()}`}
@@ -197,6 +201,7 @@ const SearchForm = (): React.ReactElement => {
             </p>
           )}
           <div
+            role="search results"
             className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${filteredStationData && filteredStationData?.length === 1
               ? "relative lg:grid-cols-1 lg:w-8/12"
               : filteredStationData?.length === 2
@@ -212,6 +217,7 @@ const SearchForm = (): React.ReactElement => {
               filteredStationData?.map((station: FilteredDataType, key) => {
                 return (
                   <div
+                    id={`${station.id}`}
                     key={key}
                     className="hover:cursor-pointer hover:bg-blue-100 hover:text-blue-700 dark:text-gray-50 dark:hover:bg-gray-500 transition duration-150 p-4 rounded-lg mx-auto w-full"
                     onClick={() => selectStation(station)}
@@ -226,9 +232,9 @@ const SearchForm = (): React.ReactElement => {
           <div className="relative flex-grow">
             <input
               type="date"
+              aria-label="date"
               defaultValue={moment().format("yyyy-MM-DD")}
               className={formClassStyle}
-              name="date"
               onChange={(e) => setSelectedDate(e.currentTarget.value)}
             ></input>
             {<CalendarIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />}
@@ -236,11 +242,11 @@ const SearchForm = (): React.ReactElement => {
 
           <div className="relative">
             <input
-              type="time"
               step="any"
+              type="time"
               defaultValue={now}
               className={formClassStyle}
-              name="time"
+              aria-label="time"
               onChange={(e) => setSelectedTime(e.currentTarget.value)}
             ></input>
             {<ClockIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />}
@@ -251,6 +257,7 @@ const SearchForm = (): React.ReactElement => {
               required
               className={formClassStyle}
               defaultValue=""
+              aria-label="direction"
               name="ArrivalOrDepature"
               value={apiBodyData?.ArrivalOrDepature}
               onChange={(e) => setArrivalOrDeparture(e.currentTarget.value)}
@@ -269,6 +276,7 @@ const SearchForm = (): React.ReactElement => {
               required
               className={formClassStyle}
               defaultValue=""
+              aria-label="result quantity"
               name="NumberOfResult"
               value={apiBodyData?.NumberOfResult}
               onChange={(e) => setNumberOfResults(e.currentTarget.value)}
