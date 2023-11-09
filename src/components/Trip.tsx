@@ -80,7 +80,7 @@ const Trip = ({ data }: any): React.ReactElement => {
         {!data.RequestedStation.IsTripCancelled && data.StopEventResponseContext.IsItDeparture && <div className={`status col-span-4 md:col-span-1 flex flex-col justify-center items-center mt-3 md:mt-0 ${deltaBetweenTimetableEstimatedDeparture > 0 ? 'text-red-500' : 'text-green-500'} font-bold text-base`}>
           {deltaBetweenTimetableEstimatedDeparture > 0 ? `+${deltaBetweenTimetableEstimatedDeparture} min` : 'On Time'}
         </div>}
-        {!data.RequestedStation.IsTripCancelled && !data.StopEventResponseContext.IsItDeparture && <div className={`status col-span-4 md:col-span-1 flex flex-col justify-center items-center mt-3 md:mt-0${deltaBetweenTimetableEstimatedArrival > 0 ? 'text-red-500' : 'text-green-500'} font-bold text-base`}>
+        {!data.RequestedStation.IsTripCancelled && !data.StopEventResponseContext.IsItDeparture && <div className={`status col-span-4 md:col-span-1 flex flex-col justify-center items-center mt-3 md:mt-0 ${deltaBetweenTimetableEstimatedArrival > 0 ? 'text-red-500' : 'text-green-500'} font-bold text-base`}>
           {deltaBetweenTimetableEstimatedArrival > 0 ? `+${deltaBetweenTimetableEstimatedArrival} min` : 'On Time'}
         </div>}
         {data.RequestedStation.IsTripCancelled && <div className={"status col-span-4 md:col-span-1 flex flex-col justify-center items-center text-red-500 font-bold text-base mt-3 md:mt-0"}>
