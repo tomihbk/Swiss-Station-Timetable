@@ -4,9 +4,10 @@ import '@testing-library/jest-dom'
 import renderWithContext from "../../util/test-utils"
 import SearchForm from "../SearchForm"
 
+
 describe("SearchForm Component", () => {
 
-    test("render 5 fields with 1 submit button", async () => {
+    test("render 5 search fields with 1 submit button", async () => {
 
         renderWithContext(<SearchForm />)
 
@@ -44,7 +45,7 @@ describe("SearchForm Component", () => {
     })
 
 
-    it("should pass if submitting with prefilled fields", async () => {
+    it("should pass if submitting with all fields filled out", async () => {
 
         renderWithContext(<SearchForm />)
 
@@ -63,4 +64,3 @@ describe("SearchForm Component", () => {
         expect(resultInput).toBeValid()
     })
 })
-
