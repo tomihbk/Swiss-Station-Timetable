@@ -23,7 +23,8 @@ export const getAllStations = async () => {
       .then(res => Promise.all([res.json()]))
       .then(([jsonData]) => jsonData)
   } catch (err) {
-    //console.log(err)
+    return
+    //console.error(err)
   }
 }
 
@@ -33,7 +34,7 @@ const SearchForm = (): React.ReactElement => {
     id: number;
     name: string;
   }
-  
+
   interface StationListDataType extends FilteredDataType {
     longname?: string;
   }
@@ -42,7 +43,7 @@ const SearchForm = (): React.ReactElement => {
 
   useEffect(() => {
     search();
-    const fetchStations = async () =>{
+    const fetchStations = async () => {
       setStationsList(await getAllStations())
     }
     fetchStations()
@@ -50,7 +51,7 @@ const SearchForm = (): React.ReactElement => {
 
   const history = useHistory();
   const now = moment().format("HH:mm:ss");
- 
+
   const [filteredStationData, setFilteredStationData] = useState<FilteredDataType[]>();
   const [apiBodyData, setApiBodyData] = useState<ApiBodyTypeData>();
   const [numberOfResults, setNumberOfResults] = useState<string>();
@@ -81,7 +82,7 @@ const SearchForm = (): React.ReactElement => {
     if (searchedLocation.length > 2) {
       // This makes sure that the results start with the first input letter
       // For ex. Bern -> all results must start by the letter B, we don't need results that contain the letter B in the middle
-      const filterStationFirstLetter = Object.values(stationsList).filter((station) =>
+      const filterStationFirstLetter = stationsList && Object.values(stationsList).filter((station) =>
         lowerCaseAndNoDiacritic(station.name).startsWith(
           lowerCaseAndNoDiacritic(searchedLocation[0])
         ) || lowerCaseAndNoDiacritic(station.longname).startsWith(
@@ -90,7 +91,7 @@ const SearchForm = (): React.ReactElement => {
       );
 
       // Filtered results from the function above
-      const filteredStations = filterStationFirstLetter.filter((station) =>
+      const filteredStations = filterStationFirstLetter && filterStationFirstLetter.filter((station) =>
         lowerCaseAndNoDiacritic(station.name).includes(
           lowerCaseAndNoDiacritic(data.currentTarget.value)
         ) ||
@@ -193,40 +194,40 @@ const SearchForm = (): React.ReactElement => {
           </div>
         </div>
         <div className="relative mx-auto w-full lg:w-9/12">
-          {filteredStationData && filteredStationData?.length > 10 && (
-            <p className="flex flex-row flex-wrap justify-center gap-4 text-sm text-gray-400 mb-3 -mt-3">
-              <ScrollDownIcon className="animate-bounce w-4" />
-              Scroll down for more result
-              <ScrollDownIcon className="animate-bounce w-4" />
-            </p>
-          )}
-          <div
-            role="search results"
-            className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${filteredStationData && filteredStationData?.length === 1
-              ? "relative lg:grid-cols-1 lg:w-8/12"
-              : filteredStationData?.length === 2
-                ? "relative lg:grid-cols-2 lg:w-8/12"
-                : filteredStationData?.length === 3
-                  ? "relative lg:grid-cols-3 lg:w-8/12"
-                  : filteredStationData?.length === 4
-                    ? "relative lg:grid-cols-4"
-                    : "lg:grid-cols-4"
-              } ${filteredStationData && filteredStationData?.length > 10 && "h-96 mt-4"}`}
-          >
-            {filteredStationData?.length != 0 &&
-              filteredStationData?.map((station: FilteredDataType, key) => {
-                return (
-                  <div
-                    id={`${station.id}`}
-                    key={key}
-                    className="hover:cursor-pointer hover:bg-blue-100 hover:text-blue-700 dark:text-gray-50 dark:hover:bg-gray-500 transition duration-150 p-4 rounded-lg mx-auto w-full"
-                    onClick={() => selectStation(station)}
-                  >
-                    {station.name}
-                  </div>
-                );
-              })}
-          </div>
+          {filteredStationData && filteredStationData?.length > 10 &&
+            (<>
+              <p className="flex flex-row flex-wrap justify-center gap-4 text-sm text-gray-400 mb-3 -mt-3">
+                <ScrollDownIcon className="animate-bounce w-4" />
+                Scroll down for more result
+                <ScrollDownIcon className="animate-bounce w-4" />
+              </p>
+              <div
+                aria-label="search results"
+                className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${filteredStationData && filteredStationData?.length === 1
+                  ? "relative lg:grid-cols-1 lg:w-8/12"
+                  : filteredStationData?.length === 2
+                    ? "relative lg:grid-cols-2 lg:w-8/12"
+                    : filteredStationData?.length === 3
+                      ? "relative lg:grid-cols-3 lg:w-8/12"
+                      : filteredStationData?.length === 4
+                        ? "relative lg:grid-cols-4"
+                        : "lg:grid-cols-4"
+                  } ${filteredStationData && filteredStationData?.length > 10 && "h-96 mt-4"}`}
+              >
+                {filteredStationData?.length != 0 &&
+                  filteredStationData?.map((station: FilteredDataType, key) => {
+                    return (
+                      <div
+                        id={`${station.id}`}
+                        key={key}
+                        className="hover:cursor-pointer hover:bg-blue-100 hover:text-blue-700 dark:text-gray-50 dark:hover:bg-gray-500 transition duration-150 p-4 rounded-lg mx-auto w-full"
+                        onClick={() => selectStation(station)}
+                      >
+                        {station.name}
+                      </div>
+                    );
+                  })}
+              </div></>)}
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-4 w-full mx-auto lg:w-6/12">
           <div className="relative flex-grow">
