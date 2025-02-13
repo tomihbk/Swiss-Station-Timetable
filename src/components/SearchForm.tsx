@@ -14,7 +14,22 @@ import apiCaller from "../util/apiCaller";
 import { addTrips } from "../state/features/trip/tripSlice";
 import { addAPIQuery } from "../state/features/api/apiSlice";
 
+export const getAllStations = async () => {
+  try {
+    return await fetch(process.env.REACT_APP_STATIONS_LIST_URL, {
+      method: 'GET',
+      headers: { Accept: 'application/json' }
+    })
+      .then(res => Promise.all([res.json()]))
+      .then(([jsonData]) => jsonData)
+  } catch (err) {
+    return
+    //console.error(err)
+  }
+}
+
 const SearchForm = (): React.ReactElement => {
+
   interface FilteredDataType {
     id: number;
     name: string;
@@ -24,15 +39,19 @@ const SearchForm = (): React.ReactElement => {
     longname?: string;
   }
 
+  const [stationsList, setStationsList] = useState<StationListDataType[]>();
+
   useEffect(() => {
     search();
-    getStations();
+    const fetchStations = async () => {
+      setStationsList(await getAllStations())
+    }
+    fetchStations()
   }, []);
 
   const history = useHistory();
   const now = moment().format("HH:mm:ss");
 
-  const [stationsList, setStationsList] = useState<StationListDataType[]>();
   const [filteredStationData, setFilteredStationData] = useState<FilteredDataType[]>();
   const [apiBodyData, setApiBodyData] = useState<ApiBodyTypeData>();
   const [numberOfResults, setNumberOfResults] = useState<string>();
@@ -63,7 +82,7 @@ const SearchForm = (): React.ReactElement => {
     if (searchedLocation.length > 2) {
       // This makes sure that the results start with the first input letter
       // For ex. Bern -> all results must start by the letter B, we don't need results that contain the letter B in the middle
-      const filterStationFirstLetter = Object.values(stationsList).filter((station) =>
+      const filterStationFirstLetter = stationsList && Object.values(stationsList).filter((station) =>
         lowerCaseAndNoDiacritic(station.name).startsWith(
           lowerCaseAndNoDiacritic(searchedLocation[0])
         ) || lowerCaseAndNoDiacritic(station.longname).startsWith(
@@ -72,7 +91,7 @@ const SearchForm = (): React.ReactElement => {
       );
 
       // Filtered results from the function above
-      const filteredStations = filterStationFirstLetter.filter((station) =>
+      const filteredStations = filterStationFirstLetter && filterStationFirstLetter.filter((station) =>
         lowerCaseAndNoDiacritic(station.name).includes(
           lowerCaseAndNoDiacritic(data.currentTarget.value)
         ) ||
@@ -105,26 +124,19 @@ const SearchForm = (): React.ReactElement => {
     setFilteredStationData([]);
   };
 
-  const getStations = async () => {
-    await fetch(process.env.REACT_APP_STATIONS_LIST_URL, {
-      method: 'GET',
-      headers: { Accept: 'application/json' }
-    })
-      .then(res => Promise.all([res.json()]))
-      .then(([jsonData]) => {
-        setStationsList(jsonData)
-      });
-  }
-
   useEffect(() => {
-    if (apiBodyData) {
-      apiCaller(apiBodyData, (res: AxiosResponse) => {
-        dispatch(addTrips(res.data))
-        dispatch(addAPIQuery(apiBodyData))
-        history.push("/trips");
-      }, (err: AxiosResponse) => {
-        console.log(err);
-      })
+    try {
+      if (apiBodyData) {
+        apiCaller(apiBodyData, (res: AxiosResponse) => {
+          dispatch(addTrips(res.data))
+          dispatch(addAPIQuery(apiBodyData))
+          history.push("/trips");
+        }, (err: AxiosResponse) => {
+          console.log(err);
+        })
+      }
+    } catch (err) {
+      console.log(err)
     }
   }, [apiBodyData]);
 
@@ -170,6 +182,7 @@ const SearchForm = (): React.ReactElement => {
             className="bg-white dark:bg-gray-600 px-6 pr-16 rounded-lg text-md border-solid focus:border-blue-500 focus:border-2 dark:focus:border-gray-200 w-full h-20 transition duration-300"
             type="search"
             name="search"
+            aria-label="station name"
             required
             value={searchedStation || ""}
             placeholder={`Search for a station for ex. : ${randomStationName()}`}
@@ -181,46 +194,48 @@ const SearchForm = (): React.ReactElement => {
           </div>
         </div>
         <div className="relative mx-auto w-full lg:w-9/12">
-          {filteredStationData && filteredStationData?.length > 10 && (
-            <p className="flex flex-row flex-wrap justify-center gap-4 text-sm text-gray-400 mb-3 -mt-3">
-              <ScrollDownIcon className="animate-bounce w-4" />
-              Scroll down for more result
-              <ScrollDownIcon className="animate-bounce w-4" />
-            </p>
-          )}
-          <div
-            className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${filteredStationData && filteredStationData?.length === 1
-              ? "relative lg:grid-cols-1 lg:w-8/12"
-              : filteredStationData?.length === 2
-                ? "relative lg:grid-cols-2 lg:w-8/12"
-                : filteredStationData?.length === 3
-                  ? "relative lg:grid-cols-3 lg:w-8/12"
-                  : filteredStationData?.length === 4
-                    ? "relative lg:grid-cols-4"
-                    : "lg:grid-cols-4"
-              } ${filteredStationData && filteredStationData?.length > 10 && "h-96 mt-4"}`}
-          >
-            {filteredStationData?.length != 0 &&
-              filteredStationData?.map((station: FilteredDataType, key) => {
-                return (
-                  <div
-                    key={key}
-                    className="hover:cursor-pointer hover:bg-blue-100 hover:text-blue-700 dark:text-gray-50 dark:hover:bg-gray-500 transition duration-150 p-4 rounded-lg mx-auto w-full"
-                    onClick={() => selectStation(station)}
-                  >
-                    {station.name}
-                  </div>
-                );
-              })}
-          </div>
+          {filteredStationData && filteredStationData?.length > 10 &&
+            (<>
+              <p className="flex flex-row flex-wrap justify-center gap-4 text-sm text-gray-400 mb-3 -mt-3">
+                <ScrollDownIcon className="animate-bounce w-4" />
+                Scroll down for more result
+                <ScrollDownIcon className="animate-bounce w-4" />
+              </p>
+              <div
+                aria-label="search results"
+                className={`absolute top-0 z-20 grid grid-cols-1 w-full md:grid-cols-2 bg-white dark:bg-gray-600 rounded-xl justify-center text-center mb-6 overflow-auto transition duration-300 ease-in-out hide-scrollbar mx-auto justify-items-center items-center ${filteredStationData && filteredStationData?.length === 1
+                  ? "relative lg:grid-cols-1 lg:w-8/12"
+                  : filteredStationData?.length === 2
+                    ? "relative lg:grid-cols-2 lg:w-8/12"
+                    : filteredStationData?.length === 3
+                      ? "relative lg:grid-cols-3 lg:w-8/12"
+                      : filteredStationData?.length === 4
+                        ? "relative lg:grid-cols-4"
+                        : "lg:grid-cols-4"
+                  } ${filteredStationData && filteredStationData?.length > 10 && "h-96 mt-4"}`}
+              >
+                {filteredStationData?.length != 0 &&
+                  filteredStationData?.map((station: FilteredDataType, key) => {
+                    return (
+                      <div
+                        id={`${station.id}`}
+                        key={key}
+                        className="hover:cursor-pointer hover:bg-blue-100 hover:text-blue-700 dark:text-gray-50 dark:hover:bg-gray-500 transition duration-150 p-4 rounded-lg mx-auto w-full"
+                        onClick={() => selectStation(station)}
+                      >
+                        {station.name}
+                      </div>
+                    );
+                  })}
+              </div></>)}
         </div>
         <div className="grid grid-cols-1 gap-6 md:grid-cols-2 md:gap-4 w-full mx-auto lg:w-6/12">
           <div className="relative flex-grow">
             <input
               type="date"
+              aria-label="date"
               defaultValue={moment().format("yyyy-MM-DD")}
               className={formClassStyle}
-              name="date"
               onChange={(e) => setSelectedDate(e.currentTarget.value)}
             ></input>
             {<CalendarIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />}
@@ -228,11 +243,11 @@ const SearchForm = (): React.ReactElement => {
 
           <div className="relative">
             <input
-              type="time"
               step="any"
+              type="time"
               defaultValue={now}
               className={formClassStyle}
-              name="time"
+              aria-label="time"
               onChange={(e) => setSelectedTime(e.currentTarget.value)}
             ></input>
             {<ClockIcon className="absolute right-0 top-0 stroke-current text-gray-500 dark:text-gray-300 w-5 mt-7 mr-7" />}
@@ -243,6 +258,7 @@ const SearchForm = (): React.ReactElement => {
               required
               className={formClassStyle}
               defaultValue=""
+              aria-label="direction"
               name="ArrivalOrDepature"
               value={apiBodyData?.ArrivalOrDepature}
               onChange={(e) => setArrivalOrDeparture(e.currentTarget.value)}
@@ -261,6 +277,7 @@ const SearchForm = (): React.ReactElement => {
               required
               className={formClassStyle}
               defaultValue=""
+              aria-label="result quantity"
               name="NumberOfResult"
               value={apiBodyData?.NumberOfResult}
               onChange={(e) => setNumberOfResults(e.currentTarget.value)}
