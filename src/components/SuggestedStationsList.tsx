@@ -6,36 +6,33 @@ import SuggestedStation from "./SuggestedStation";
 import { addAPIQuery } from "../state/features/api/apiSlice";
 import { clearTrips } from "../state/features/trip/tripSlice";
 
+import { Bern, BaselSBB, Geneve, Lausanne, ZurichHB } from "../images/main-stations";
+
 const stationsList = [
   {
     id: "8507000",
     stationName: "Bern",
-    imageUrl:
-      "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof_Bern.jpg?q=45"
+    imageUrl: Bern
   },
   {
     id: "8500010",
     stationName: "Basel SBB",
-    imageUrl:
-      "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof_BaselSBB.jpg?q=45"
+    imageUrl: BaselSBB
   },
   {
     id: "8501008",
     stationName: "Genève",
-    imageUrl:
-      "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof-Genf.jpg?q=45"
+    imageUrl: Geneve
   },
   {
     id: "8501120",
     stationName: "Lausanne",
-    imageUrl:
-      "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Bahnhof-Lausanne.jpg?q=45"
+    imageUrl: Lausanne
   },
   {
     id: "8503000",
     stationName: "Zürich HB",
-    imageUrl:
-      "https://cdn.img.sbb.ch/content/dam/internet/sharedimages/objekte/Zuerich-HB.jpg?q=45"
+    imageUrl: ZurichHB
   },
 ];
 
